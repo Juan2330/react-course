@@ -23,7 +23,8 @@ app.use(cors({
         callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true
+    credentials: true,
+    exposedHeaders: ['set-cookie']
 }));
 
 app.use(session({
@@ -35,8 +36,7 @@ app.use(session({
         secure: true, 
         httpOnly: true,
         sameSite: 'none',
-        maxAge: 24 * 60 * 60 * 1000,
-        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
+        domain: 'shopi-backend.onrender.com'
     }
 }));
 
