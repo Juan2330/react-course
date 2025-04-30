@@ -10,7 +10,7 @@ export const totalPrice = (products) => {
 /**
  * Formats a price to 2 decimal places
  * @param {number|string} price 
- * @returns {string} Formatted price
+ * @returns {string}
  */
 export const formatPrice = (price) => {
     return parseFloat(price).toFixed(2);

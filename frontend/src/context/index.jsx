@@ -24,7 +24,7 @@ export const ShoppingCartProvider = ({ children }) => {
 
     const logout = async () => {
       try {
-        const response = await fetch('http://localhost:3000/auth/logout', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
           method: 'GET',
           credentials: 'include'
         });
@@ -48,7 +48,7 @@ export const ShoppingCartProvider = ({ children }) => {
     useEffect(() => {
       const checkAuth = async () => {
           try {
-            const response = await fetch('http://localhost:3000/auth/user', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
               credentials: 'include'
             });
             if (response.ok) {

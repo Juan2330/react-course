@@ -10,7 +10,7 @@ function Login() {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await fetch('http://localhost:3000/auth/user', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
                     credentials: 'include'
                 });
                 if (response.ok) {
@@ -27,7 +27,7 @@ function Login() {
     }, [context, navigate]);
 
     const handleGitHubLogin = () => {
-        window.location.href = 'http://localhost:3000/auth/github';
+        window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
     };
 
     return (

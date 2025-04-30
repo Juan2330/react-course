@@ -7,8 +7,22 @@ const cors = require('cors');
 
 const app = express();
 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL || `${FRONTEND_URL}/auth/github/callback`;
+
+const allowedOrigins = [
+    'http://localhost:5173',
+    FRONTEND_URL
+];
+
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        } else {
+        callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 
@@ -16,12 +30,13 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback-secret',
     resave: false,
     saveUninitialized: false,
-    name: 'connect.sid',
+    name: 'shopi.sid',
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000 
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 24 * 60 * 60 * 1000,
+        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     }
 }));
 
@@ -31,10 +46,10 @@ app.use(passport.session());
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: process.env.GITHUB_CALLBACK_URL
-},
+    callbackURL: GITHUB_CALLBACK_URL
+    },
     (accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
+        return done(null, profile);
 }
 ));
 
@@ -51,13 +66,13 @@ app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] 
 app.get('/auth/github/callback', 
     passport.authenticate('github', { failureRedirect: '/login' }),
     (req, res) => {
-    res.redirect('http://localhost:5173');
-}
+        res.redirect(FRONTEND_URL);
+    }
 );
 
 app.get('/auth/user', (req, res) => {
     if (req.isAuthenticated()) {
-        res.json({
+            res.json({
             id: req.user.id,
             username: req.user.username,
             displayName: req.user.displayName,
@@ -76,11 +91,11 @@ app.get('/auth/logout', (req, res) => {
             return res.status(500).json({ message: 'Error logging out' });
         }
         req.session.destroy(function(err) {
-            if (err) {
-                console.error('Error destroying session:', err);
-                return res.status(500).json({ message: 'Error destroying session' });
-            }
-            res.clearCookie('connect.sid'); 
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).json({ message: 'Error destroying session' });
+        }
+            res.clearCookie('shopi.sid'); 
             res.status(200).json({ message: 'Logged out successfully' });
         });
     });
@@ -88,7 +103,7 @@ app.get('/auth/logout', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
 
 
