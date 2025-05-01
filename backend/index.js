@@ -4,6 +4,8 @@ const session = require('express-session');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 const cors = require('cors');
+const RedisStore = require('connect-redis').default;
+const redis = require('redis');
 
 const app = express();
 
@@ -15,6 +17,16 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ];
 
+const redisClient = redis.createClient({
+    url: process.env.REDIS_URL, 
+    socket: {
+        tls: true,                
+        rejectUnauthorized: false 
+    }
+});
+redisClient.on('error', (err) => console.log('Redis Client Error:', err));
+redisClient.connect().then(() => console.log('Connected to Redis'));
+
 app.use(cors({
     origin: allowedOrigins,
     credentials: true,         
@@ -22,14 +34,16 @@ app.use(cors({
 }));
 
 app.use(session({
+    store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
+        secure: true,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', 
-        sameSite: 'none', 
-        domain: process.env.COOKIE_DOMAIN 
+        sameSite: 'none',
+        domain: 'shopi-backend.onrender.com',
+        maxAge: 86400000 
     }
 }));
 
@@ -93,6 +107,8 @@ app.get('/auth/logout', (req, res) => {
         });
     });
 });
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
