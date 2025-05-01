@@ -16,14 +16,8 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-        } else {
-        callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
+    origin: ['https://shopi-frontend-fgd9.onrender.com'],
+    credentials: true,         
     exposedHeaders: ['set-cookie']
 }));
 
@@ -36,7 +30,8 @@ app.use(session({
         secure: true, 
         httpOnly: true,
         sameSite: 'none',
-        domain: '.onrender.com' 
+        domain: '.onrender.com',
+        maxAge: 24 * 60 * 60 * 1000 
     }
 }));
 
@@ -66,7 +61,7 @@ app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] 
 app.get('/auth/github/callback', 
     passport.authenticate('github', { failureRedirect: '/login' }),
     (req, res) => {
-        res.redirect(FRONTEND_URL);
+        res.redirect(process.env.FRONTEND_URL);
     }
 );
 

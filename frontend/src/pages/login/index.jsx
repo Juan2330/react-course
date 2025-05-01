@@ -12,11 +12,8 @@ function Login() {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
                     credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
                 });
+                
                 if (response.ok) {
                     const user = await response.json();
                     context.setUser(user);
@@ -26,7 +23,7 @@ function Login() {
                 console.error('Error checking auth:', error);
             }
         };
-
+    
         checkAuth();
     }, [context, navigate]);
 
