@@ -22,6 +22,22 @@ const pool = new Pool({
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
+async function createSessionsTable() {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS user_sessions (
+                sid VARCHAR PRIMARY KEY,
+                sess JSON NOT NULL,
+                expire TIMESTAMP NOT NULL
+            );
+        `);
+        console.log('Tabla user_sessions verificada/creada');
+    } catch (err) {
+        console.error('Error al crear user_sessions:', err);
+    }
+}
+createSessionsTable();
+
 async function startServer() {
     try {
         app.use(cors({
@@ -41,8 +57,7 @@ async function startServer() {
             cookie: {
                 secure: true,
                 httpOnly: true,
-                sameSite: 'none',
-                domain: '.onrender.com',
+                sameSite: 'lax',
                 maxAge: 86400000,
             },
         }));
@@ -53,10 +68,11 @@ async function startServer() {
         passport.use(new GitHubStrategy({
             clientID: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            callbackURL: GITHUB_CALLBACK_URL
-            },
-            (accessToken, refreshToken, profile, done) => {
-                return done(null, profile);
+            callbackURL: GITHUB_CALLBACK_URL,
+            proxy: true,
+            scope: ['user:email'],
+        }, (accessToken, refreshToken, profile, done) => {
+            return done(null, profile);
         }));
 
         passport.serializeUser((user, done) => {
