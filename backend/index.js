@@ -24,8 +24,7 @@ const redisClient = createClient({
         rejectUnauthorized: false
     }
 });
-redisClient.on('error', (err) => console.log('Redis Client Error:', err));
-redisClient.connect().then(() => console.log('Connected to Redis'));
+await redisClient.connect(); 
 
 app.use(cors({
     origin: allowedOrigins,
@@ -34,7 +33,7 @@ app.use(cors({
 }));
 
 app.use(session({
-    store: new RedisStore({ client: redisClient }), 
+    store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

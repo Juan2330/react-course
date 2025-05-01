@@ -13,11 +13,8 @@ function Login() {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
                     credentials: 'include',
                     headers: {
-                        'Accept': 'application/json',
+                        'Accept': 'application/json'
                     }
-                        .then(response => response.json())
-                        .then(data => console.log(data))
-                        .catch(error => console.error(error))
                 });
                 
                 if (response.ok) {
@@ -29,7 +26,6 @@ function Login() {
                 console.error('Error checking auth:', error);
             }
         };
-    
         checkAuth();
     }, [context, navigate]);
 
