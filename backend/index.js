@@ -16,7 +16,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-    origin: ['https://shopi-frontend-fgd9.onrender.com'],
+    origin: 'https://shopi-frontend-fgd9.onrender.com',
     credentials: true,         
     exposedHeaders: ['set-cookie']
 }));
@@ -30,7 +30,7 @@ app.use(session({
         secure: true, 
         httpOnly: true,
         sameSite: 'none',
-        domain: '.onrender.com',
+        domain: 'shopi-backend.onrender.com',
         maxAge: 24 * 60 * 60 * 1000 
     }
 }));

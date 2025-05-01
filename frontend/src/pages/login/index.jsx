@@ -12,6 +12,9 @@ function Login() {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
                     credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
                 });
                 
                 if (response.ok) {
