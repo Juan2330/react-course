@@ -12,11 +12,11 @@ const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL || `${FRONTEND_URL}/
 
 const allowedOrigins = [
     'http://localhost:5173',
-    FRONTEND_URL
+    process.env.FRONTEND_URL
 ];
 
 app.use(cors({
-    origin: 'https://shopi-frontend-fgd9.onrender.com',
+    origin: allowedOrigins,
     credentials: true,         
     exposedHeaders: ['set-cookie']
 }));
@@ -25,13 +25,11 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    name: 'shopi.sid',
     cookie: {
-        secure: true, 
         httpOnly: true,
-        sameSite: 'none',
-        domain: 'shopi-backend.onrender.com',
-        maxAge: 24 * 60 * 60 * 1000 
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'none', 
+        domain: process.env.COOKIE_DOMAIN 
     }
 }));
 
