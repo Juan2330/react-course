@@ -21,7 +21,15 @@ const redisClient = createClient({
     url: process.env.REDIS_URL,
     socket: {
         tls: true,
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        connectTimeout: 10000, 
+        reconnectStrategy: (retries) => {
+            if (retries > 5) {
+            console.log("Demasiados intentos de reconexión. Cerrando...");
+            return new Error("No se pudo conectar a Redis");
+            }
+            return Math.min(retries * 200, 5000); 
+        }
     }
 });
 
