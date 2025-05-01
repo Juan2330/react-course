@@ -33,10 +33,10 @@ app.use(session({
     saveUninitialized: false,
     name: 'shopi.sid',
     cookie: {
-        secure: true, 
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: 'none',
-        domain: 'shopi-backend.onrender.com'
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost'
     }
 }));
 

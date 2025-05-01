@@ -27,7 +27,7 @@ function Login() {
     }, [context, navigate]);
 
     const handleGitHubLogin = () => {
-        window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
+        window.open(`${import.meta.env.VITE_API_URL}/auth/github`, "_self");
     };
 
     return (
