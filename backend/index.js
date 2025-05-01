@@ -55,7 +55,7 @@ async function startServer() {
                 secure: true,
                 httpOnly: true,
                 sameSite: 'none',
-                domain: 'shopi-backend.onrender.com',
+                domain: '.onrender.com',
                 maxAge: 86400000
             }
         }));
