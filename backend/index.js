@@ -4,8 +4,8 @@ const session = require('express-session');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 const cors = require('cors');
-const { createClient } = require('redis');
-const RedisStore = require('connect-redis').default; 
+const { Pool } = require('pg');
+const PgStore = require('connect-pg-simple')(session);
 
 const app = express();
 
@@ -17,29 +17,13 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ];
 
-const redisClient = createClient({
-    url: process.env.REDIS_URL,
-    socket: {
-        tls: false,
-        rejectUnauthorized: false,
-        connectTimeout: 10000, 
-        reconnectStrategy: (retries) => {
-            if (retries > 5) {
-            console.log("Demasiados intentos de reconexión. Cerrando...");
-            return new Error("No se pudo conectar a Redis");
-            }
-            return Math.min(retries * 200, 5000); 
-        }
-    }
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
-
-redisClient.on('error', (err) => console.log('Redis Client Error:', err));
 
 async function startServer() {
     try {
-        await redisClient.connect();
-        console.log('Connected to Redis');
-
         app.use(cors({
             origin: allowedOrigins,
             credentials: true,         
@@ -47,7 +31,10 @@ async function startServer() {
         }));
 
         app.use(session({
-            store: new RedisStore({ client: redisClient }),
+            store: new PgStore({
+                pool: pool,
+                tableName: 'user_sessions', 
+            }),
             secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: false,
@@ -56,8 +43,8 @@ async function startServer() {
                 httpOnly: true,
                 sameSite: 'none',
                 domain: '.onrender.com',
-                maxAge: 86400000
-            }
+                maxAge: 86400000,
+            },
         }));
 
         app.use(passport.initialize());
