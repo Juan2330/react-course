@@ -5,7 +5,7 @@ const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 const cors = require('cors');
 const { createClient } = require('redis');
-const { RedisStore } = require('connect-redis');
+const RedisStore = require('connect-redis')(session);
 
 const app = express();
 
