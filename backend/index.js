@@ -43,21 +43,20 @@ async function startServer() {
         app.use(cors({
             origin: allowedOrigins,
             credentials: true,         
-            exposedHeaders: ['set-cookie']
+            exposedHeaders: ['set-cookie'],
+            methods: ['GET', 'POST', 'OPTIONS'],
         }));
 
         app.use(session({
-            store: new PgStore({
-                pool: pool,
-                tableName: 'user_sessions', 
-            }),
+            store: new PgStore({ pool, tableName: 'user_sessions' }),
             secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: true,
+                secure: true, 
                 httpOnly: true,
-                sameSite: 'lax',
+                sameSite: 'none', 
+                domain: process.env.COOKIE_DOMAIN || '.onrender.com', 
                 maxAge: 86400000,
             },
         }));
@@ -76,11 +75,15 @@ async function startServer() {
         }));
 
         passport.serializeUser((user, done) => {
-            done(null, user);
+            done(null, user.id); 
         });
 
-        passport.deserializeUser((user, done) => {
-            done(null, user);
+        passport.deserializeUser(async (id, done) => {
+            try {
+                done(null, { id });
+            } catch (err) {
+                done(err);
+            }
         });
 
         app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
@@ -94,12 +97,10 @@ async function startServer() {
 
         app.get('/auth/user', (req, res) => {
             if (req.isAuthenticated()) {
-                    res.json({
+                res.json({
                     id: req.user.id,
-                    username: req.user.username,
-                    displayName: req.user.displayName,
-                    emails: req.user.emails,
-                    photos: req.user.photos
+                    username: req.user.username || req.user.displayName,
+                    email: req.user.emails?.[0]?.value || null,
                 });
             } else {
                 res.status(401).json({ message: 'Not authenticated' });
