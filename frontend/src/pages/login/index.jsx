@@ -10,25 +10,38 @@ function Login() {
     useEffect(() => {
         const checkAuth = async () => {
             try {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
                     credentials: 'include',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
                 });
                 
-                if (response.ok) {
-                    const user = await response.json();
-                    context.setUser(user);
-                    navigate('/');
+                if (response.status === 401) {
+                    context.setUser(null);
+                    return;
                 }
+                
+                if (!response.ok) throw new Error('Auth check failed');
+        
+                const user = await response.json();
+                context.setUser(user);
+                navigate('/');
             } catch (error) {
-                console.error('Error checking auth:', error);
+                console.error('Auth error:', error);
+                context.setUser(null);
             }
         };
+        
         checkAuth();
     }, [context, navigate]);
 
     const handleGitHubLogin = (event) => {
         event.preventDefault();
-        window.open(`${import.meta.env.VITE_API_URL}/auth/github`, "_self");
+        context.setUser(null); 
+        window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
     };
 
     return (

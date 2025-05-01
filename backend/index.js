@@ -41,10 +41,9 @@ createSessionsTable();
 async function startServer() {
     try {
         app.use(cors({
-            origin: allowedOrigins,
-            credentials: true,         
-            exposedHeaders: ['set-cookie'],
-            methods: ['GET', 'POST', 'OPTIONS'],
+            origin: 'https://shopi-frontend-fgd9.onrender.com',
+            credentials: true,
+            exposedHeaders: ['set-cookie']
         }));
 
         app.use(session({
@@ -53,11 +52,11 @@ async function startServer() {
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: true, 
-                httpOnly: true,
-                sameSite: 'none', 
-                domain: process.env.COOKIE_DOMAIN || '.onrender.com', 
-                maxAge: 86400000,
+                secure: true,     
+                httpOnly: true,        
+                sameSite: 'none',      
+                domain: '.onrender.com', 
+                maxAge: 86400000, 
             },
         }));
 

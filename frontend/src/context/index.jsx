@@ -24,24 +24,14 @@ export const ShoppingCartProvider = ({ children }) => {
 
     const logout = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
           method: 'GET',
           credentials: 'include'
         });
-        
-        if (response.ok) {
-          setUser(null);
-          setDarkMode(false);
-          localStorage.removeItem('darkMode');
-          document.documentElement.classList.remove('dark');
-          
-          setCartProducts([]);
-          setOrder([]);
-        } else {
-          console.error('Logout failed:', await response.text());
-        }
+        setUser(null);
+        window.location.href = '/'; 
       } catch (error) {
-        console.error('Error logging out:', error);
+        console.error('Logout failed:', error);
       }
     };
 
