@@ -18,9 +18,9 @@ const allowedOrigins = [
 ];
 
 const redisClient = createClient({
-    url: process.env.REDIS_TLS_URL,
+    url: process.env.REDIS_URL,
     socket: {
-        tls: true,
+        tls: false,
         rejectUnauthorized: false,
         connectTimeout: 10000, 
         reconnectStrategy: (retries) => {
