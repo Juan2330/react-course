@@ -11,7 +11,11 @@ function Login() {
         const checkAuth = async () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
                 });
                 if (response.ok) {
                     const user = await response.json();
@@ -26,7 +30,8 @@ function Login() {
         checkAuth();
     }, [context, navigate]);
 
-    const handleGitHubLogin = () => {
+    const handleGitHubLogin = (event) => {
+        event.preventDefault();
         window.open(`${import.meta.env.VITE_API_URL}/auth/github`, "_self");
     };
 
@@ -36,7 +41,7 @@ function Login() {
                 <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-80 transition-colors">
                     <h1 className="text-2xl font-bold mb-6 text-center dark:text-white">Login</h1>
                     <button
-                        onClick={handleGitHubLogin}
+                        onClick={(event) => handleGitHubLogin(event)}
                         className="w-full bg-gray-800 dark:bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
                     >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
