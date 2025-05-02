@@ -41,10 +41,8 @@ createSessionsTable();
 async function startServer() {
     try {
         app.use(cors({
-            origin: process.env.FRONTEND_URL,
+            origin: 'https://shopi-frontend-fgd9.onrender.com',
             credentials: true,
-            methods: ['GET', 'POST', 'OPTIONS'],
-            allowedHeaders: ['Content-Type', 'Authorization'],
             exposedHeaders: ['set-cookie']
         }));
 
@@ -58,11 +56,9 @@ async function startServer() {
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: true,
-                httpOnly: true,
+                domain: process.env.NODE_ENV === 'production' ? '.render.com' : 'localhost', 
                 sameSite: 'none',
-                domain: process.env.COOKIE_DOMAIN || '.onrender.com',
-              maxAge: 24 * 60 * 60 * 1000 
+                secure: true
             }
         }));
 
@@ -95,7 +91,7 @@ async function startServer() {
         app.get('/auth/github', passport.authenticate('github'));
 
         app.get('/auth/github/callback', 
-            passport.authenticate('github', { 
+            passport.authenticate('github', {
                 failureRedirect: '/login',
                 successRedirect: process.env.FRONTEND_URL
             })

@@ -37,18 +37,19 @@ export const ShoppingCartProvider = ({ children }) => {
 
     useEffect(() => {
       const checkAuth = async () => {
-          try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
-              credentials: 'include'
-            });
-            if (response.ok) {
-              const userData = await response.json();
-              setUser(userData);
-            }
-          } catch (error) {
-            console.error('Error checking auth:', error);
-          }
-        };
+        try {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
+            credentials: 'include',
+            redirect: 'manual' 
+          });
+          
+          if (res.status === 401) throw new Error('No autenticado');
+          const user = await res.json();
+          setUser(user);
+        } catch {
+          setUser(null);
+        }
+      };
         checkAuth();
       }, []);
 
