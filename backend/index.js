@@ -10,7 +10,7 @@ const PgStore = require('connect-pg-simple')(session);
 const app = express();
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL || `${FRONTEND_URL}/auth/github/callback`;
+const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL || 'https://shopi-backend.onrender.com/auth/github/callback';
 
 const allowedOrigins = [
     'http://localhost:5173',
@@ -43,8 +43,9 @@ async function startServer() {
         app.use(cors({
             origin: process.env.FRONTEND_URL,
             credentials: true,
-            methods: ['GET', 'POST', 'PUT', 'DELETE'],
-            allowedHeaders: ['Content-Type', 'Authorization']
+            methods: ['GET', 'POST', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'Authorization'],
+            exposedHeaders: ['set-cookie']
         }));
 
         app.use(session({
@@ -60,8 +61,8 @@ async function startServer() {
                 secure: true,
                 httpOnly: true,
                 sameSite: 'none',
-                domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
-                maxAge: 24 * 60 * 60 * 1000 
+                domain: process.env.COOKIE_DOMAIN || '.onrender.com',
+              maxAge: 24 * 60 * 60 * 1000 
             }
         }));
 
@@ -91,25 +92,25 @@ async function startServer() {
             }
         });
 
-        app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
+        app.get('/auth/github', passport.authenticate('github'));
 
         app.get('/auth/github/callback', 
-            passport.authenticate('github', { failureRedirect: '/login' }),
-            (req, res) => {
-                res.redirect(process.env.FRONTEND_URL);
-            }
+            passport.authenticate('github', { 
+                failureRedirect: '/login',
+                successRedirect: process.env.FRONTEND_URL
+            })
         );
 
         app.get('/auth/user', (req, res) => {
             if (req.isAuthenticated()) {
-                res.json({
+                return res.json({
                     id: req.user.id,
                     username: req.user.username || req.user.displayName,
-                    email: req.user.emails?.[0]?.value || null,
+                    email: req.user.emails?.[0]?.value,
+                    photos: req.user.photos
                 });
-            } else {
-                res.status(401).json({ message: 'Not authenticated' });
             }
+            res.status(401).json({ message: 'Not authenticated' });
         });
 
         app.get('/auth/logout', (req, res) => {
