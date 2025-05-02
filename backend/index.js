@@ -41,23 +41,28 @@ createSessionsTable();
 async function startServer() {
     try {
         app.use(cors({
-            origin: 'https://shopi-frontend-fgd9.onrender.com',
+            origin: process.env.FRONTEND_URL,
             credentials: true,
-            exposedHeaders: ['set-cookie']
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization']
         }));
 
         app.use(session({
-            store: new PgStore({ pool, tableName: 'user_sessions' }),
+            store: new PgStore({ 
+                pool: pool,
+                tableName: 'user_sessions',
+                createTableIfMissing: true
+            }),
             secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: true,     
-                httpOnly: true,        
-                sameSite: 'none',      
-                domain: '.onrender.com', 
-                maxAge: 86400000, 
-            },
+                secure: true,
+                httpOnly: true,
+                sameSite: 'none',
+                domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
+                maxAge: 24 * 60 * 60 * 1000 
+            }
         }));
 
         app.use(passport.initialize());
@@ -69,7 +74,8 @@ async function startServer() {
             callbackURL: GITHUB_CALLBACK_URL,
             proxy: true,
             scope: ['user:email'],
-        }, (accessToken, refreshToken, profile, done) => {
+            passReqToCallback: true
+        }, (req, accessToken, refreshToken, profile, done) => {
             return done(null, profile);
         }));
 
