@@ -26,8 +26,8 @@ const ProductDetail = () => {
             <p className='flex flex-col p-6'>
                 <span className='font-medium text-xl mb-2 dark:text-white'>
                     ${typeof context.productToShow.price === 'number' ? 
-                      context.productToShow.price.toFixed(2) : 
-                      parseFloat(context.productToShow.price).toFixed(2)}
+                        context.productToShow.price.toFixed(2) : 
+                        parseFloat(context.productToShow.price).toFixed(2)}
                 </span>
                 <span className='font-medium text-md dark:text-gray-300'>
                     {context.productToShow.title}
