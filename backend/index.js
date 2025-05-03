@@ -40,12 +40,10 @@ createSessionsTable();
 
 async function startServer() {
     try {
-        app.use(
-            cors({
-                origin: process.env.FRONTEND_URL, 
-                credentials: true 
-            })
-        );
+        app.use(cors({
+            origin: 'https://shopi-frontend-fgd9.onrender.com',
+            credentials: true,
+        }));
 
         app.use(
             session({

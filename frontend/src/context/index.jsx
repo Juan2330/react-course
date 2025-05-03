@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import PropTypes from "prop-types";
+import axios from 'axios';
 
 export const ShoppingCartContext = createContext();
 
@@ -35,25 +36,7 @@ export const ShoppingCartProvider = ({ children }) => {
       }
     };
 
-    useEffect(() => {
-      const checkAuth = async () => {
-          try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
-              credentials: 'include' 
-            });
-            const data = await response.json();
-            if (response.ok) {
-              setUser(data);
-            } else {
-              setUser(null);
-            }
-          } catch (error) {
-            console.error(error);
-            setUser(null);
-          }
-        };
-        checkAuth();
-      }, []);
+    axios.get('/auth/user', { withCredentials: true });
 
     useEffect(() => {
       fetch('https://fakestoreapi.com/products')
