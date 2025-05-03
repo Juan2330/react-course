@@ -6,6 +6,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const cors = require('cors');
 const { Pool } = require('pg');
 const PgStore = require('connect-pg-simple')(session);
+const pgSession = require('connect-pg-simple')(session);
 
 const app = express();
 
