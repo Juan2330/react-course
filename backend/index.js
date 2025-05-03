@@ -40,27 +40,26 @@ createSessionsTable();
 
 async function startServer() {
     try {
-        app.use(cors({
-            origin: 'https://shopi-frontend-fgd9.onrender.com',
-            credentials: true,
-            exposedHeaders: ['set-cookie']
-        }));
+        app.use(
+            cors({
+                origin: process.env.FRONTEND_URL, 
+                credentials: true 
+            })
+        );
 
-        app.use(session({
-            store: new PgStore({ 
-                pool: pool,
-                tableName: 'user_sessions',
-                createTableIfMissing: true
-            }),
-            secret: process.env.SESSION_SECRET,
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                domain: process.env.NODE_ENV === 'production' ? '.render.com' : 'localhost', 
-                sameSite: 'none',
-                secure: true
-            }
-        }));
+        app.use(
+            session({
+                secret: process.env.SESSION_SECRET,
+                resave: false,
+                saveUninitialized: false,
+                cookie: {
+                    domain: '.onrender.com',
+                    secure: true, 
+                    sameSite: 'none', 
+                    maxAge: 24 * 60 * 60 * 1000
+                }
+            })
+        );
 
         app.use(passport.initialize());
         app.use(passport.session());
