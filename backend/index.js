@@ -49,7 +49,8 @@ async function startServer() {
         }));
 
         app.use(session({
-            store: new (pgSession(session))({
+            store: new pgSession({
+                conString: process.env.DATABASE_URL,
                 pool: db, 
                 tableName: 'user_sessions'
             }),
