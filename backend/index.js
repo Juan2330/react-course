@@ -6,7 +6,6 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const cors = require('cors');
 const { Pool } = require('pg');
 const PgStore = require('connect-pg-simple')(session);
-const pgSession = require('connect-pg-simple')(session);
 
 const app = express();
 
@@ -44,24 +43,29 @@ async function startServer() {
         app.set('trust proxy', 1);
 
         app.use(cors({
-            origin: 'https://shopi-frontend-fgd9.onrender.com',
+            origin: function (origin, callback) {
+                if (!origin || allowedOrigins.includes(origin)) {
+                    callback(null, true);
+                } else {
+                    callback(new Error('Not allowed by CORS'));
+                }
+            },
             credentials: true,
         }));
 
         app.use(session({
-            store: new pgSession({
+            store: new PgStore({
                 conString: process.env.DATABASE_URL,
-                pool: db, 
+                pool: pool, 
                 tableName: 'user_sessions'
             }),
             secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 httpOnly: true,
-                sameSite: 'none',
-                domain: '.onrender.com' 
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             }
         }));
 
@@ -80,21 +84,17 @@ async function startServer() {
         }));
 
         passport.serializeUser((user, done) => {
-            done(null, user.id); 
+            done(null, user);
         });
-
-        passport.deserializeUser(async (id, done) => {
-            try {
-                done(null, { id });
-            } catch (err) {
-                done(err);
-            }
+        
+        passport.deserializeUser((user, done) => {
+            done(null, user);
         });
 
         app.get('/auth/github/callback', passport.authenticate('github', {
             failureRedirect: '/',
             }), (req, res) => {
-                res.redirect('https://shopi-frontend-fgd9.onrender.com');
+                res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173');
         });
 
         app.get('/auth/user', (req, res) => {
@@ -109,21 +109,21 @@ async function startServer() {
             res.status(401).json({ message: 'Not authenticated' });
         });
 
-        app.get('/auth/logout', (req, res) => {
-            req.logout(function(err) {
-                if (err) {
-                    console.error('Error during logout:', err);
-                    return res.status(500).json({ message: 'Error logging out' });
-                }
-                req.session.destroy(function(err) {
-                if (err) {
-                    console.error('Error destroying session:', err);
-                    return res.status(500).json({ message: 'Error destroying session' });
-                }
-                    res.clearCookie('shopi.sid'); 
+        app.get('/auth/logout', async (req, res) => {
+            try {
+                await req.logout();
+                req.session.destroy(err => {
+                    if (err) {
+                        console.error('Error destroying session:', err);
+                        return res.status(500).json({ message: 'Error destroying session' });
+                    }
+                    res.clearCookie('shopi.sid');
                     res.status(200).json({ message: 'Logged out successfully' });
                 });
-            });
+            } catch (err) {
+                console.error('Error during logout:', err);
+                res.status(500).json({ message: 'Error logging out' });
+            }
         });
 
         const PORT = process.env.PORT || 3000;
