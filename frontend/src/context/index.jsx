@@ -25,7 +25,7 @@ export const ShoppingCartProvider = ({ children }) => {
 
     const logout = async () => {
       try {
-        await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+        await axios.get(`${import.meta.env.VITE_API_URL}/auth/logout`, {
           method: 'GET',
           credentials: 'include'
         });

@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartContext } from '../../context';
+import axios from 'axios';
 
 function Login() {
     const { setUser } = useContext(ShoppingCartContext);
@@ -9,7 +10,7 @@ function Login() {
     useEffect(() => {
         const verifyAuth = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/user`, {
                     method: 'GET',
                     credentials: 'include', 
                     headers: {
