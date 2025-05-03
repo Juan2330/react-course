@@ -36,7 +36,20 @@ export const ShoppingCartProvider = ({ children }) => {
       }
     };
 
-    axios.get('/auth/user', { withCredentials: true });
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/user`, {
+            withCredentials: true
+          });
+          setUser(response.data);
+        } catch (error) {
+          console.error('Error fetching user:', error);
+        }
+      };
+    
+      fetchUser();
+    }, []);
 
     useEffect(() => {
       fetch('https://fakestoreapi.com/products')
