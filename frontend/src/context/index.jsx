@@ -40,11 +40,16 @@ export const ShoppingCartProvider = ({ children }) => {
       const fetchUser = async () => {
         try {
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/user`, {
-            withCredentials: true
+            withCredentials: true,
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
           });
           setUser(response.data);
         } catch (error) {
           console.error('Error fetching user:', error);
+          setUser(null);
         }
       };
     
