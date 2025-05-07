@@ -6,7 +6,7 @@ export default defineConfig({
   base: '/',
   plugins: [react(),],
   preview: {
-    port: 4173, 
+    port: 5173, 
     host: true,
     allowedHosts: [
       "react-course-frontend-production.up.railway.app"
