@@ -1,24 +1,24 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import dotenv from 'dotenv';
-dotenv.config();
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  base: '/',
+  plugins: [react(),],
+  preview: {
+    port: 4173, 
+    host: true,
+    allowedHosts: [
+      "react-course-frontend-production.up.railway.app"
+    ]
+  },
   server: {
     proxy: {
-      '/auth': {
-        target: import.meta.env.VITE_API_URL,
+      '/api': {
+        target: 'react-course-production.up.railway.app',
         changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/auth/, ''),
-        ws: true
-      }
-    }
+        secure: false,
+      },
+    },
   },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    emptyOutDir: true
-  }
 });
