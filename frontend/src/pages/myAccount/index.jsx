@@ -76,26 +76,41 @@ function MyAccount() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow">
-                  <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">Total Orders</p>
-                  <p className="text-3xl font-bold text-indigo-900 dark:text-indigo-200 mt-2">
-                    {context.order?.length || 0}
-                  </p>
-                </div>
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow">
-                  <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Total Spent</p>
-                  <p className="text-2xl w-fit font-bold text-purple-900 dark:text-purple-200 mt-2">
-                    ${context.order?.reduce((total, order) => 
-                    total + (Number(order.totalPrice) || 0), 0).toFixed(2) || '0.00'}
-                  </p>
-                </div>
-                <div className="bg-green-50 dark:bg-green-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow">
-                  <p className="text-sm font-medium text-green-600 dark:text-green-400">Last Order</p>
-                  <p className="text-xl font-bold text-green-900 dark:text-green-200 mt-2">
-                    {context.order?.[0]?.date || 'N/A'}
-                  </p>
-                </div>
+              <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center">
+                <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2">Total Orders</p>
+                <p className="text-3xl font-bold text-indigo-900 dark:text-indigo-200">
+                  {context.order?.length || 0}
+                </p>
               </div>
+              
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center">
+                <p className="text-sm font-medium text-purple-600 dark:text-purple-400 mb-2">Total Spent</p>
+                <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
+                  ${context.order?.reduce((total, order) => 
+                    total + (Number(order.totalPrice) || 0), 0).toFixed(2) || '0.00'}
+                </p>
+              </div>
+              
+              <div className="bg-green-50 dark:bg-green-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center">
+                <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">Last Order</p>
+                <p className="text-lg font-bold text-green-900 dark:text-green-200 whitespace-nowrap">
+                  {context.order?.[0]?.date ? (
+                    <span className="inline-block">
+                      {new Date(context.order[0].date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                      })}
+                      <br />
+                      {new Date(context.order[0].date).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                  ) : 'N/A'}
+                </p>
+              </div>
+            </div>
             </div>
           </div>
       ) : (
