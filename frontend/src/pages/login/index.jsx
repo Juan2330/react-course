@@ -5,6 +5,7 @@ function Login() {
     useContext(ShoppingCartContext);
 
     const handleLogin = () => {
+        window.localStorage.removeItem('shoppingCartState');
         window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
     };
 

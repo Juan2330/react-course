@@ -41,10 +41,7 @@ export const ShoppingCartProvider = ({ children }) => {
         try {
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/user`, {
             withCredentials: true,
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
+            timeout: 5000 
           });
           setUser(response.data);
         } catch (error) {

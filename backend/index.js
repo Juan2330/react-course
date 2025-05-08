@@ -21,21 +21,19 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(session({
-    store: new MemoryStore({
-        checkPeriod: 86400000
-    }),
+    store: new MemoryStore({ checkPeriod: 86400000 }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     proxy: true,
     cookie: {
+        secure: true,
         httpOnly: true,
-        maxAge: 86400000,
-        secure: true, 
-        sameSite: 'none', 
+        maxAge: 24 * 60 * 60 * 1000, 
+        sameSite: 'none',
         domain: process.env.NODE_ENV === 'production' 
-        ? '.railway.app'
-        : undefined
+            ? '.railway.app' 
+            : undefined
     }
 }));
 
