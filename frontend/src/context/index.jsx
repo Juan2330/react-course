@@ -26,11 +26,12 @@ export const ShoppingCartProvider = ({ children }) => {
     const logout = async () => {
       try {
         await axios.get(`${import.meta.env.VITE_API_URL}/auth/logout`, {
-          method: 'GET',
-          credentials: 'include'
+          withCredentials: true
         });
+        
         setUser(null);
-        window.location.href = '/'; 
+        
+        window.location.href = '/';
       } catch (error) {
         console.error('Logout failed:', error);
       }
