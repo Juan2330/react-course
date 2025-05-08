@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'react-course-production.up.railway.app',
+        target: 'https://react-course-production.up.railway.app',
         changeOrigin: true,
         secure: false,
       },
