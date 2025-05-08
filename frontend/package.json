@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/",
-    "start": "vite preview --port=10000",
+    "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview --port=5173"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
