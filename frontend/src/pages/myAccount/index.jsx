@@ -58,86 +58,95 @@ function MyAccount() {
                           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Username</p>
                           <p className="text-lg text-gray-900 dark:text-white font-semibold mt-1">{context.user.username || 'Not available'}</p>
                         </div>
-                      <div>
-                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</p>
-                      <p className="text-lg text-gray-900 dark:text-white font-semibold mt-1">
-                        {context.user.emails?.[0]?.value || 'Not available'}
-                      </p>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</p>
+                          <p className="text-lg text-gray-900 dark:text-white font-semibold mt-1">
+                            {context.user.emails?.[0]?.value || 'Not available'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">GitHub ID</p>
+                          <p className="text-lg text-gray-900 dark:text-white font-semibold mt-1">{context.user.id || 'Not available'}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Account Type</p>
+                          <p className="text-lg text-gray-900 dark:text-white font-semibold mt-1">GitHub</p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">GitHub ID</p>
-                      <p className="text-lg text-gray-900 dark:text-white font-semibold mt-1">{context.user.id || 'Not available'}</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
+                      <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center items-center">
+                        <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2 h-5 flex items-center">
+                          Total Orders
+                        </p>
+                        <p className="text-3xl font-bold text-indigo-900 dark:text-indigo-200">
+                          {context.order?.length || 0}
+                        </p>
+                      </div>
+                      
+                      <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center items-center">
+                        <p className="text-sm font-medium text-purple-600 dark:text-purple-400 mb-2 h-5 flex items-center">
+                          Total Spent
+                        </p>
+                        <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
+                          ${context.order?.reduce((total, order) => 
+                            total + Number(order.totalPrice || 0), 0).toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                      
+                      <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center items-center">
+                        <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-2 h-5 flex items-center">
+                          Last Order
+                        </p>
+                        <div className="text-lg font-bold text-green-900 dark:text-green-200">
+                          {context.order?.[0]?.date ? (
+                            <>
+                              <span className="block">
+                                {new Date(context.order[0].date).toLocaleDateString('en-US', {
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  year: 'numeric'
+                                })}
+                              </span>
+                              <span className="block">
+                                {new Date(context.order[0].date).toLocaleTimeString('en-US', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+                            </>
+                          ) : 'N/A'}
+                        </div>
+                      </div>
                     </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Account Type</p>
-                    <p className="text-lg text-gray-900 dark:text-white font-semibold mt-1">GitHub</p>
                   </div>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-indigo-50 dark:bg-indigo-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center">
-                <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2">Total Orders</p>
-                <p className="text-3xl font-bold text-indigo-900 dark:text-indigo-200">
-                  {context.order?.length || 0}
-                </p>
-              </div>
-              
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center">
-                <p className="text-sm font-medium text-purple-600 dark:text-purple-400 mb-2">Total Spent</p>
-                <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
-                  ${context.order?.reduce((total, order) => 
-                    total + (Number(order.totalPrice) || 0), 0).toFixed(2) || '0.00'}
-                </p>
-              </div>
-              
-              <div className="bg-green-50 dark:bg-green-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow min-h-[120px] flex flex-col justify-center">
-                <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">Last Order</p>
-                <p className="text-lg font-bold text-green-900 dark:text-green-200 whitespace-nowrap">
-                  {context.order?.[0]?.date ? (
-                    <span className="inline-block">
-                      {new Date(context.order[0].date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                      })}
-                      <br />
-                      {new Date(context.order[0].date).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
-                  ) : 'N/A'}
-                </p>
-              </div>
-            </div>
+              ) : (
+                <div className="p-10 text-center">
+                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-6">
+                    <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-medium text-gray-900 dark:text-white">You are not logged in</h3>
+                  <p className="mt-2 text-gray-600 dark:text-gray-300 max-w-md mx-auto">
+                    Please log in with your GitHub account to access all profile features.
+                  </p>
+                  <div className="mt-8">
+                    <Link
+                      to="/login"
+                      className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 transition-colors duration-200"
+                    >
+                      Go to Login Page
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-      ) : (
-        <div className="p-10 text-center">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-6">
-            <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            </div>
-              <h3 className="text-2xl font-medium text-gray-900 dark:text-white">You are not logged in</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-300 max-w-md mx-auto">
-                Please log in with your GitHub account to access all profile features.
-              </p>
-              <div className="mt-8">
-                <Link
-                  to="/login"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 transition-colors duration-200"
-                >
-                  Go to Login Page
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </Layout>
-  );
+        </Layout>
+    );
 }
 
 export default MyAccount;
