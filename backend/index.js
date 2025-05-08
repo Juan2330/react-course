@@ -23,19 +23,28 @@ app.use(cors(corsOptions));
 app.use(session({
     store: new MemoryStore({ checkPeriod: 86400000 }),
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     proxy: true,
     cookie: {
         secure: true,
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000, 
+        maxAge: 24 * 60 * 60 * 1000,
         sameSite: 'none',
-        domain: process.env.NODE_ENV === 'production' 
-            ? '.railway.app' 
-            : undefined
+        domain: '.railway.app'
     }
 }));
+
+app.use((req, res, next) => {
+    console.log('>>> Request:', {
+        method: req.method,
+        path: req.path,
+        headers: req.headers,
+        cookies: req.cookies,
+        session: req.session
+    });
+    next();
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -55,7 +64,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
-    (null, user);
+    done(null, user);
 });
 
 app.get('/auth/github', passport.authenticate('github'));
