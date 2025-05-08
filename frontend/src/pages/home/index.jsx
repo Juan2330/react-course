@@ -20,7 +20,7 @@ function Home() {
           <div className='flex flex-col justify-center items-center h-full w-full'>
             <img 
               className='object-cover rounded-lg' 
-              src='../../Images/Cry.jpg'
+              src='/frontend/public/cry.jpg'
               alt='No products found'
             />
             <div className='flex items-center justify-center relative w-80'>
