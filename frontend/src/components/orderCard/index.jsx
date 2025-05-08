@@ -27,9 +27,9 @@ const OrderCard = props => {
                 <p className='text-sm font-light dark:text-gray-300'>{title}</p>
             </div>
             <div className='flex items-center gap-2'>
-                <p className='text-lg font-medium dark:text-white'>
-                    ${typeof price === 'number' ? price.toFixed(2) : parseFloat(price).toFixed(2)}
-                </p>
+            <p className='text-lg font-medium dark:text-white'>
+                ${typeof price === 'number' ? price.toFixed(2) : parseFloat(price || 0).toFixed(2)}
+            </p>
                 {renderXMarkIcon}
             </div>
         </div>

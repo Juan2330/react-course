@@ -4,7 +4,10 @@
  * @returns {string} Total price formatted with 2 decimals
  */
 export const totalPrice = (products) => {
-    return products.reduce((sum, product) => sum + product.price, 0).toFixed(2);
+    if (!Array.isArray(products)) return '0.00';
+    return products
+        .reduce((sum, product) => sum + (Number(product.price) || 0), 0)
+        .toFixed(2);
 };
 
 /**

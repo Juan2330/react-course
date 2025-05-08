@@ -85,7 +85,8 @@ function MyAccount() {
                 <div className="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow">
                   <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Total Spent</p>
                   <p className="text-2xl w-fit font-bold text-purple-900 dark:text-purple-200 mt-2">
-                    ${context.order?.reduce((total, order) => total + order.totalPrice, 0).toFixed(0) || '0.00'}
+                    ${context.order?.reduce((total, order) => 
+                    total + (Number(order.totalPrice) || 0), 0).toFixed(2) || '0.00'}
                   </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 p-5 rounded-xl text-center hover:shadow-md transition-shadow">

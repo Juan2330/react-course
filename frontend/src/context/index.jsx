@@ -154,7 +154,7 @@ export const ShoppingCartProvider = ({ children }) => {
         date: new Date().toLocaleDateString(),
         products,
         totalProducts: products.length,
-        totalPrice: totalPrice(products)
+        totalPrice: parseFloat(totalPrice(products))
       };
 
       const updatedOrders = [...order, orderToAdd];
