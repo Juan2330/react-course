@@ -91,17 +91,21 @@ app.get('/auth/user', (req, res) => {
 app.get('/auth/logout', (req, res) => {
     req.logout(() => {
         req.session.destroy(err => {
-        if (err) {
-            console.error('Error destroying session:', err);
-            return res.status(500).json({ message: 'Error logging out' });
-        }
-        res.clearCookie('connect.sid', {
+            if (err) {
+                console.error('Error destroying session:', err);
+                return res.status(500).json({ message: 'Error logging out' });
+            }
+            
+            res.clearCookie('connect.sid', {
                 path: '/',
                 domain: '.railway.app',
                 secure: true,
                 sameSite: 'none'
             });
-        res.status(200).json({ message: 'Logged out successfully' });
+            
+            res.json({
+                githubLogoutUrl: `https://github.com/logout?returnTo=${encodeURIComponent(process.env.FRONTEND_URL)}`
+            });
         });
     });
 });
