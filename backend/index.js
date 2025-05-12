@@ -89,8 +89,6 @@ app.get('/auth/user', (req, res) => {
 });
 
 app.get('/auth/logout', (req, res) => {
-    const githubLogoutUrl = 'https://github.com/logout';
-    
     req.logout(() => {
         req.session.destroy(err => {
             if (err) {
@@ -105,7 +103,9 @@ app.get('/auth/logout', (req, res) => {
                 sameSite: 'none'
             });
             
-            res.redirect(`${githubLogoutUrl}?returnTo=${encodeURIComponent(process.env.FRONTEND_URL)}`);
+            res.json({
+                githubLogoutUrl: `https://github.com/logout?returnTo=${encodeURIComponent(process.env.FRONTEND_URL)}`
+            });
         });
     });
 });
