@@ -96,9 +96,11 @@ app.get('/auth/logout', (req, res) => {
             return res.status(500).json({ message: 'Error logging out' });
         }
         res.clearCookie('connect.sid', {
-            path: '/',
-            domain: process.env.NODE_ENV === 'production' ? '.railway.app' : undefined
-        });
+                path: '/',
+                domain: '.railway.app',
+                secure: true,
+                sameSite: 'none'
+            });
         res.status(200).json({ message: 'Logged out successfully' });
         });
     });
