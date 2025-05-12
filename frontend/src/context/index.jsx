@@ -24,20 +24,20 @@ export const ShoppingCartProvider = ({ children }) => {
     const closeCheckoutSideMenu = () => setIsCheckoutSideMenuOpen(false);
 
     const logout = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/logout`, {
-          withCredentials: true
-        });
-        
-        setUser(null);
-        
-        window.location.href = response.data.githubLogoutUrl;
-        
-      } catch (error) {
-        console.error('Logout failed:', error);
-        window.location.href = '/';
-      }
-    };
+  try {
+    await axios.get(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+      withCredentials: true
+    });    
+      setUser(null);
+      setCartProducts([]);
+      setOrder([]);
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setUser(null);
+      window.location.href = '/';
+    }
+  };
 
     useEffect(() => {
       const fetchUser = async () => {

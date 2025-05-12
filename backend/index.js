@@ -103,9 +103,7 @@ app.get('/auth/logout', (req, res) => {
                 sameSite: 'none'
             });
             
-            res.json({
-                githubLogoutUrl: `https://github.com/logout?returnTo=${encodeURIComponent(process.env.FRONTEND_URL)}`
-            });
+            res.status(200).json({ message: 'Logged out successfully' });
         });
     });
 });
